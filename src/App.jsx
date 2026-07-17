@@ -6,10 +6,21 @@ import TablaNotas from './components/TablaNotas'
 
 export default function App() {
   const [notas, setNotas] = useState([])
-  const [especialidad, setEspecialidad] = useState(ESPECIALIDADES[0].nombre)
+  const [especialidad, setEspecialidad] = useState(null)  // null = auto (la más poblada)
 
   const refrescar = useCallback(() => { cargarNotas().then(setNotas).catch(() => {}) }, [])
   useEffect(() => { refrescar() }, [refrescar])
+
+  // Default automático: abrir por la especialidad con más notas (hasta que el
+  // usuario elija una a mano). Así la web nunca arranca en una pestaña vacía.
+  useEffect(() => {
+    if (especialidad || notas.length === 0) return
+    const conteo = {}
+    notas.forEach(n => { conteo[n.especialidad] = (conteo[n.especialidad] || 0) + 1 })
+    const top = ESPECIALIDADES.map(e => e.nombre)
+      .sort((a, b) => (conteo[b] || 0) - (conteo[a] || 0))[0]
+    setEspecialidad(top)
+  }, [notas, especialidad])
 
   return (
     <div className="min-h-screen bg-gray-50">
