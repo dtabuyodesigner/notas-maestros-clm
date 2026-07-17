@@ -1,4 +1,5 @@
 import { ESPECIALIDADES, ordenarConCorte } from '../lib/corte'
+import { exportarPDF } from '../lib/pdf'
 
 export default function TablaNotas({ notas, especialidad, onEspecialidad }) {
   const meta = ESPECIALIDADES.find(e => e.nombre === especialidad) || ESPECIALIDADES[0]
@@ -31,9 +32,18 @@ export default function TablaNotas({ notas, especialidad, onEspecialidad }) {
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 align-middle ml-1"></span> pendiente de subir
       </p>
 
-      <p className="text-xs text-gray-500 mb-2">
-        {propias.length} nota{propias.length === 1 ? '' : 's'} en {meta.nombre} · {meta.plazas} plazas
-      </p>
+      <div className="flex items-center justify-between mb-2 gap-2">
+        <p className="text-xs text-gray-500">
+          {propias.length} nota{propias.length === 1 ? '' : 's'} en {meta.nombre} · {meta.plazas} plazas
+        </p>
+        {filas.length > 0 && (
+          <button
+            onClick={() => exportarPDF({ especialidad: meta.nombre, plazas: meta.plazas, filas })}
+            className="text-xs px-2.5 py-1 rounded-lg border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 flex-shrink-0">
+            📄 Descargar PDF
+          </button>
+        )}
+      </div>
 
       <div className="bg-white rounded-xl border overflow-hidden">
         {filas.length === 0 && <p className="p-4 text-sm text-gray-400">Aún no hay notas en esta especialidad. ¡Sé el primero!</p>}
