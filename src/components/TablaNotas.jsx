@@ -5,17 +5,31 @@ export default function TablaNotas({ notas, especialidad, onEspecialidad }) {
   const propias = notas.filter(n => n.especialidad === meta.nombre)
   const filas = ordenarConCorte(propias, meta.plazas)
 
+  // Nº de notas por especialidad → punto verde (subida) / rojo (pendiente) + contador.
+  const conteos = {}
+  notas.forEach(n => { conteos[n.especialidad] = (conteos[n.especialidad] || 0) + 1 })
+
   return (
     <div>
-      <div className="flex flex-wrap gap-1.5 mb-3">
-        {ESPECIALIDADES.map(e => (
-          <button key={e.nombre} onClick={() => onEspecialidad(e.nombre)}
-            className={`text-xs px-2.5 py-1.5 rounded-full border ${e.nombre === meta.nombre
-              ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600'}`}>
-            {e.nombre}
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-1.5 mb-1.5">
+        {ESPECIALIDADES.map(e => {
+          const n = conteos[e.nombre] || 0
+          const activa = e.nombre === meta.nombre
+          return (
+            <button key={e.nombre} onClick={() => onEspecialidad(e.nombre)}
+              className={`text-xs px-2.5 py-1.5 rounded-full border flex items-center gap-1.5 ${activa
+                ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600'}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${n > 0 ? 'bg-green-500' : 'bg-red-400'}`}></span>
+              {e.nombre}
+              {n > 0 && <span className="opacity-70">({n})</span>}
+            </button>
+          )
+        })}
       </div>
+      <p className="text-[10px] text-gray-400 mb-3">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 align-middle"></span> ya disponible ·
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 align-middle ml-1"></span> pendiente de subir
+      </p>
 
       <p className="text-xs text-gray-500 mb-2">
         {propias.length} nota{propias.length === 1 ? '' : 's'} en {meta.nombre} · {meta.plazas} plazas
