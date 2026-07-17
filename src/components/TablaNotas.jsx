@@ -35,7 +35,7 @@ export default function TablaNotas({ notas, especialidad, onEspecialidad }) {
                 <span className="text-gray-400 w-8 tabular-nums">{posicion}</span>
                 <span className="text-gray-700">{fila.nombre || fila.dni_parcial || 'Anónimo'}</span>
               </span>
-              <span className="font-bold tabular-nums">{Number(fila.nota).toFixed(2)}</span>
+              <span className="font-bold tabular-nums">{Number(fila.nota)}</span>
             </div>
           </div>
         ))}
