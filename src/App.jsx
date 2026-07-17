@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { ESPECIALIDADES } from './lib/corte'
 import { cargarNotas } from './lib/datos'
 import FormularioNota from './components/FormularioNota'
@@ -42,6 +43,9 @@ export default function App() {
           Herramienta comunitaria independiente · sin validez oficial
         </p>
       </main>
+      {/* Contador de visitas PRIVADO — solo visible en el panel de Vercel (Analytics),
+          no muestra nada en la web. */}
+      <Analytics />
     </div>
   )
 }
