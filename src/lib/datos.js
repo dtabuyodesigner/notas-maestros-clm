@@ -10,11 +10,24 @@ export async function enviarNota({ especialidad, nota, nombre, dni_parcial }) {
 }
 
 export async function cargarNotas() {
-  const { data, error } = await supabase
-    .from('nota_publica')
-    .select('id, especialidad, nota, nombre, dni_parcial')
-  if (error) throw error
-  return data || []
+  // PostgREST limita cada SELECT a 1000 filas → paginamos con .range() hasta
+  // traerlas todas (con miles de notas, una sola petición se quedaba corta y
+  // faltaban especialidades enteras).
+  const PAGE = 1000
+  let desde = 0
+  let todas = []
+  for (;;) {
+    const { data, error } = await supabase
+      .from('nota_publica')
+      .select('id, especialidad, nota, nombre, dni_parcial')
+      .order('id', { ascending: true })
+      .range(desde, desde + PAGE - 1)
+    if (error) throw error
+    todas = todas.concat(data || [])
+    if (!data || data.length < PAGE) break
+    desde += PAGE
+  }
+  return todas
 }
 
 export async function contarTotal() {
